@@ -3,7 +3,7 @@
   <compiler angle="radian"/>
   <option timestep="0.0002" integrator="Euler">
     <!-- <flag contact="disable" gravity="disable"/> -->
-    <flag gravity="disable"/>
+    <flag gravity="enable"/>
   </option>
 
   <asset>
@@ -25,19 +25,26 @@
   <worldbody>
     <!-- <body name="palm" pos="-0.0200952 0.0257578 -0.0347224"> -->
     <light name="top" pos="0 0 1"/>
-    <geom type="plane" size="3 3 .01" material="grid"/>
-    <camera name="closeup" pos="0 -.1 .07" xyaxes="1 0 0 0 1 2"/>
+    <geom type="plane" pos="0 0 -0.025" size="3 3 .01" material="grid"/>
+    <camera name="closeup" mode="fixed" pos="-0.02 1 0.025" xyaxes="-1 0 0 0 0 1"/>
     
 
-    <body name="cube" pos="0.025 0 0.025">
-    <inertial pos="0 0 0" mass="0.001" diaginertia="0.0001 0.0001 0.0001"/>
-    <geom type="box" size="0.05 0.05 0.05" material="box" friction="0"/>
-    <!-- <joint name="box" type="free" damping="0.0"/> -->
+    <body name="cube" pos="-0.02 0 0.025">
+    <inertial pos="0 0 0" mass="0.0001" diaginertia="0.0001 0.0001 0.0001"/>
+    <geom type="box" size="0.05 0.05 0.05" material="box"/>
+    <joint name="box" type="free"/>
         </body>
 
-    <body name="palm" pos="0 0 0.2">
-    <!-- <joint type="free"/> -->
-    <geom name="palm" pos="-0.0200952 0.0257578 -0.0347224" type="mesh" rgba="0.603922 0.14902 0.14902 1" mesh="palm_lower" friction="10"/>
+    <body name="arm" pos="-0.4 0 0.17">
+      <geom type="box" size="0.01 0.01 0.01" material="box"/>
+      <joint name="palm_slide" type="slide" range="0 0.5" damping="10"/>
+
+    <body name="wrist" pos="0.2 0 0">
+      <geom type="cylinder" size="0.01 0.05" euler="0 1.5708 0" material="box"/>
+      <joint name="wrist" axis="1 0 0" range="0 3.1415" stiffness="25" damping="10"/>
+      
+    <body name="palm" pos="0.2 0 0">
+    <geom name="palm" pos="-0.0200952 0.0257578 -0.0347224" type="mesh" rgba="0.603922 0.14902 0.14902 1" mesh="palm_lower" />
     
     <!-- <geom name="palm" type="mesh" rgba="0.603922 0.14902 0.14902 1" mesh="palm_lower"/> -->
     <body name="mcp_joint" pos="-0.00709525 0.0230578 -0.0187224" quat="0.5 0.5 0.5 -0.5">
@@ -60,6 +67,8 @@
         </body>
       </body>
     </body>
+  
+
 
 
     <!-- <body name="mcp_joint_2" pos="-0.00709525 -0.0223922 -0.0187224" quat="0.5 0.5 0.5 -0.5">
@@ -125,9 +134,14 @@
       </body>
     </body>
     </body>
+    </body>
+    </body>
   </worldbody>
 
 <actuator>
+    
+    <motor name="palm_slide" joint="palm_slide"/>
+    <motor name="wrist" joint="wrist"/>
     <motor name="motor_1" joint="1"/>
     <motor name="motor_0" joint="0"/>
     <motor name="motor_2" joint="2"/>

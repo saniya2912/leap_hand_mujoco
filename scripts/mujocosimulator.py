@@ -2,7 +2,7 @@ import mujoco
 import mujoco.viewer
 
 
-model = mujoco.MjModel.from_xml_path('/home/iitgn-robotics/Saniya/mujoco-3.1.6/model/leap hand/index_thumb.xml')
+model = mujoco.MjModel.from_xml_path('/home/sysidea/leap_hand_mujoco/model/leap hand/leaphand.xml')
 data = mujoco.MjData(model)
 
 print(f'Number of actuators in the model: {model.nu}')
@@ -21,3 +21,4 @@ viewer =mujoco.viewer.launch(model, data) #mujoco_viewer.MujocoViewer(model, dat
 
 # close
 viewer.close()
+

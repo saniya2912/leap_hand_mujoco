@@ -15,16 +15,25 @@ class LeapNodeMujoco:
         ####Some parameters
         # self.ema_amount = float(rospy.get_param('/leaphand_node/ema', '1.0')) #take only current
         #self.kP=600
-        self.kP = 100
+        self.kP = 10
         self.kI = 0
-        self.kD = 75
-        self.curr_lim = 350
+        self.kD = 7
+        self.kPpalm = 100
+        self.kIpalm = 0
+        self.kDpalm = 1
+        self.kPwrist = 150
+        self.kIwrist = 0
+        self.kDwrist = 1
+        self.curr_lim = 0
         # self.prev_pos = self.pos = self.curr_pos = lhus.LEAPhand_to_LEAPsim(lhus.allegro_to_LEAPhand(np.zeros(16)))
         self.prev_pos = self.pos = self.curr_pos = 0.0
+        self.prev_pos_palm=self.pos_palm=self.curr_pos_palm=0
+        self.prev_pos_wrist=self.pos_wrist=self.curr_pos_wrist=0
        # self.model_path='/home/iitgn-robotics/Saniya/mujoco-3.1.6/model/leap hand/leaphand.xml'
 
         self.m = mujoco.MjModel.from_xml_path(model_path)
         self.d = mujoco.MjData(self.m)
+        self.cam=mujoco.MjvCamera()
 
         # self.viewer=mujoco.viewer.launch(self.m, self.d)
 
@@ -36,7 +45,9 @@ class LeapNodeMujoco:
 
         # For PID control
         self.prev_error = np.zeros_like(self.curr_pos)
-        self.integral = np.zeros_like(self.curr_pos)
+        self.prev_error_palm = np.zeros_like(self.curr_pos_palm)
+        self.integral_palm=np.zeros_like(self.curr_pos_palm)
+        
 
         # Set initial control values
         #self.set_initial_controls()
@@ -49,8 +60,55 @@ class LeapNodeMujoco:
         # self.d.ctrl[:num_actuators] = 0
         print("control is 0")
         # Initialize control values with Kp, Ki, Kd might be more complex depending on the control strategy
+
+
+    def apply_controls_wrist(self, desired_position):
+
+        # Calculate control signals based on PID control (if needed)
+        current_positions = self.d.qpos[-9]
         
-       
+        # print(current_positions)
+        error_wrist = desired_position - current_positions
+        # self.integral_wrist += error_wrist
+        derivative = error_wrist - self.prev_error_palm
+        
+        control_signal = (
+            self.kPwrist * error_wrist +
+            # self.kIwrist * self.integral_wrist +
+            self.kDwrist * derivative
+        )
+        
+        # Limit the current if necessary
+        #control_signals = np.clip(control_signals, -self.curr_lim, self.curr_lim)
+
+        self.d.ctrl[-9] = control_signal
+        
+        
+        self.prev_error_wrist = error_wrist  
+
+    def apply_controls_palm(self, desired_position):
+
+        # Calculate control signals based on PID control (if needed)
+        current_positions = self.d.qpos[-10]
+        
+        # print(current_positions)
+        error_palm = desired_position - current_positions
+        # self.integral_palm += error_palm
+        derivative = error_palm - self.prev_error_palm
+        
+        control_signal = (
+            self.kPpalm * error_palm +
+            self.kIpalm * self.integral_palm +
+            self.kDpalm * derivative
+        )
+        
+        # Limit the current if necessary
+        #control_signals = np.clip(control_signals, -self.curr_lim, self.curr_lim)
+
+        self.d.ctrl[-10] = control_signal
+        
+        
+        self.prev_error_palm = error_palm   
 
     def apply_controls(self, desired_positions):
 
@@ -70,7 +128,7 @@ class LeapNodeMujoco:
         # Limit the current if necessary
         #control_signals = np.clip(control_signals, -self.curr_lim, self.curr_lim)
 
-        self.d.ctrl[:] = control_signals
+        self.d.ctrl[-8:] = control_signals
         
         
         self.prev_error = errors    
