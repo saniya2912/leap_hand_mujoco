@@ -32,7 +32,9 @@
 
     <body name="cube" pos="-0.02 0 0">
     <inertial pos="0 0 0" mass="0.001" diaginertia="0.001 0.001 0.001"/>
-    <geom type="box" size="0.03 0.03 0.03" material="box"/>
+    <site name="contact_thumb" pos="-0.03 0 0" quat="1 0 0 0"/>
+    <site name="contact_index" pos="0.03 0 0" quat="1 0 0 0"/>
+    <geom name="cube" type="box" size="0.03 0.03 0.03" material="box"/>
     <joint name="box" type="free"/>
         </body>
 

@@ -30,9 +30,9 @@
     <camera name="top" mode="fixed" pos="0 0 0.8" xyaxes="1 0 0 0 1 0"/>
     
 
-    <body name="cube" pos="-0.02 0 0">
-    <inertial pos="0 0 0" mass="0.001" diaginertia="0.001 0.001 0.001"/>
-    <geom type="box" size="0.03 0.03 0.03" material="box"/>
+    <body name="cube" pos="-0.02 0.005 0">
+    <inertial pos="0 0 0" mass="0.0001" diaginertia="0.001 0.001 0.001"/>
+    <geom type="box" size="0.025 0.025 0.025" material="box"/>
     <joint name="box" type="free"/>
         </body>
 
