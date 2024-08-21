@@ -1,7 +1,7 @@
 import numpy as np
 
-import leap_sim_utils.mujoco_client as mjc
-import leap_sim_utils.leapsim_utils as lhus
+# import leap_sim_utils.mujoco_client as mjc
+# import leap_sim_utils.leapsim_utils as lhus
 import time
 import mujoco
 import mujoco.viewer
@@ -145,11 +145,11 @@ class LeapNodeMujoco:
     #     self.dxl_client.write_desired_pos(self.motors, self.curr_pos)
     # #Sim compatibility, first read the sim value in range [-1,1] and then convert to leap
 
-    def set_ones(self, pose):
-        pose = lhus.LEAPhand_to_LEAPsim(lhus.sim_ones_to_LEAPhand(np.array(pose)))
-        self.prev_pos = self.curr_pos
-        self.curr_pos = np.array(pose)
-        self.apply_controls(self.curr_pos)
+    # def set_ones(self, pose):
+    #     pose = lhus.LEAPhand_to_LEAPsim(lhus.sim_ones_to_LEAPhand(np.array(pose)))
+    #     self.prev_pos = self.curr_pos
+    #     self.curr_pos = np.array(pose)
+    #     self.apply_controls(self.curr_pos)
 
     # Read position
     def read_pos(self):

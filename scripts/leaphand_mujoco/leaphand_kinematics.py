@@ -97,7 +97,7 @@ class LeapHandKinematics:
 
 # Example usage
 if __name__ == "__main__":
-    urdf_path = '/home/barat/mujoco_leaphand/leap_right/robot.urdf'
+    urdf_path = '/home/sysidea/leap_hand_mujoco/model/leap hand/robot.urdf'
     leaphand_kinematics = LeapHandKinematics(urdf_path)
 
     # Hardcoded joint angles for each finger
