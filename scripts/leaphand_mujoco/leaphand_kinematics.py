@@ -100,32 +100,35 @@ if __name__ == "__main__":
     urdf_path = '/home/sysidea/leap_hand_mujoco/model/leap hand/robot.urdf'
     leaphand_kinematics = LeapHandKinematics(urdf_path)
 
-    # Hardcoded joint angles for each finger
-    joint_angles = {
-        'fingertip': [0.5235987756, 0.1, 0.2, 0.3],
-        'fingertip_2': [0.2, 0.3, 0.3, 0.3],
-        'fingertip_3': [0.2, 0.3, 0.1, 0.2],
-        'thumb_fingertip': [0.1, 0.2, 0.3, 0.1]
-    }
+    # # Hardcoded joint angles for each finger
+    # joint_angles = {
+    #     'fingertip': [0.5235987756, 0.1, 0.2, 0.3],
+    #     'fingertip_2': [0.2, 0.3, 0.3, 0.3],
+    #     'fingertip_3': [0.2, 0.3, 0.1, 0.2],
+    #     'thumb_fingertip': [0.1, 0.2, 0.3, 0.1]
+    # }
 
-    for finger, angles in joint_angles.items():
-        joint_positions = kdl.JntArray(len(angles))
-        for i, angle in enumerate(angles):
-            joint_positions[i] = angle
+    # for finger, angles in joint_angles.items():
+    #     joint_positions = kdl.JntArray(len(angles))
+    #     for i, angle in enumerate(angles):
+    #         joint_positions[i] = angle
 
-        print(f"--- {finger} ---")
-        try:
-            # Perform FK
-            fk_result = leaphand_kinematics.perform_fk(finger, joint_positions)
-            print(f"End effector pose for {finger}: {fk_result}")
+    #     print(f"--- {finger} ---")
+    #     try:
+    #         # Perform FK
+    #         fk_result = leaphand_kinematics.perform_fk(finger, joint_positions)
+    #         print(f"End effector pose for {finger}: {fk_result}")
 
-            # Compute Jacobian
-            jacobian = leaphand_kinematics.compute_jacobian(finger, joint_positions)
-            print(f"Jacobian for {finger}:\n{jacobian}")
+    #         # Compute Jacobian
+    #         jacobian = leaphand_kinematics.compute_jacobian(finger, joint_positions)
+    #         print(f"Jacobian for {finger}:\n{jacobian}")
 
-            # Perform IK
-            ik_result = leaphand_kinematics.perform_ik(finger, fk_result)
-            print(f"IK joint positions for {finger}: {ik_result}")
+    #         # Perform IK
+    #         ik_result = leaphand_kinematics.perform_ik(finger, fk_result)
+    #         print(f"IK joint positions for {finger}: {ik_result}")
 
-        except RuntimeError as e:
-            print(f"Computation failed for {finger}: {e}")
+    #     except RuntimeError as e:
+    #         print(f"Computation failed for {finger}: {e}")
+    ik_result = leaphand_kinematics.perform_ik('fingertip', kdl.Frame(kdl.Rotation.RPY(0, 0, 0),
+                            kdl.Vector(0, 0, 0)))
+    print(f"IK joint positions for {'fingertip'}: {ik_result}")

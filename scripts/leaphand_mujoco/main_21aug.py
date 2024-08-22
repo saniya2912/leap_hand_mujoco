@@ -12,9 +12,9 @@ class LeapNodeMujoco:
         ####Some parameters
         # self.ema_amount = float(rospy.get_param('/leaphand_node/ema', '1.0')) #take only current
         #self.kP=600
-        self.kP = 5
+        self.kP = 10
         self.kI = 0
-        self.kD = 3
+        self.kD = 5
         self.kPpalm = 250
         self.kIpalm = 0
         self.kDpalm = 10
@@ -155,10 +155,10 @@ class LeapNodeMujoco:
         return self.d.qvel.tolist()
     
    
-    def step_video(self, framerate):
+    def step_video(self, framerate,camera):
         mujoco.mj_step(self.m, self.d)
         if len(self.frames) < self.d.time * framerate:
-                self.renderer.update_scene(self.d)
+                self.renderer.update_scene(self.d,camera)
                 pixels = self.renderer.render()
                 self.frames.append(pixels)
                 
