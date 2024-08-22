@@ -56,7 +56,7 @@ def perform_ik(chain, target_frame):
         raise RuntimeError("IK solver failed")
 
 def main():
-    urdf_path = '/home/barat/mujoco_leaphand/leap_right/robot.urdf'
+    urdf_path = '/home/sysidea/leap_hand_mujoco/model/leap hand/robot2.urdf'
     urdf_model = URDF.from_xml_file(urdf_path)
 
     # fingers = {
@@ -94,15 +94,18 @@ def main():
     base_link = 'palm_lower'
     for finger, target_pose in fingers.items():
         chain = create_kdl_chain_from_urdf(urdf_model, base_link, finger)
-        if chain and chain.getNrOfSegments() > 0:
-            print(f"Chain for {finger} created with {chain.getNrOfSegments()} segments.")
-            try:
-                joint_positions = perform_ik(chain, target_pose)
-                print(f"Joint positions for {finger}: {joint_positions}")
-            except RuntimeError as e:
-                print(f"IK failed for {finger}: {e}")
-        else:
-            print(f"Chain for {finger} could not be created.")
+        # if chain and chain.getNrOfSegments() > 0:
+        #     #print(f"Chain for {finger} created with {chain.getNrOfSegments()} segments.")
+        #     try:
+        #         joint_positions = perform_ik(chain, target_pose)
+        #         #print(f"Joint positions for {finger}: {joint_positions}")
+        #     except RuntimeError as e:
+        #         pass
+        #         #print(f"IK failed for {finger}: {e}")
+        # else:
+        #     print(f"Chain for {finger} could not be created.")
+
+    print(chain)
 
 if __name__ == "__main__":
     main()

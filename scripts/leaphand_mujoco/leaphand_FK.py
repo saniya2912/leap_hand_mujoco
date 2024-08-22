@@ -55,7 +55,7 @@ def perform_fk(chain, joint_positions):
         raise RuntimeError("FK solver failed")
 
 def main():
-    urdf_path = '/home/barat/mujoco_leaphand/leap_right/robot.urdf'
+    urdf_path = '/home/sysidea/leap_hand_mujoco/model/leap hand/robot2.urdf'
     urdf_model = URDF.from_xml_file(urdf_path)
 
     # Hardcoded joint angles for each finger
