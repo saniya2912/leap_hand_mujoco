@@ -2,10 +2,9 @@ import mujoco
 import mujoco.viewer
 
 
-model = mujoco.MjModel.from_xml_path('/home/sysidea/leap_hand_mujoco/model/leap hand/index_finger.xml')
+model = mujoco.MjModel.from_xml_path('/home/sysidea/leap_hand_mujoco/model/leap hand/leaphand_19.8.24.xml')
 data = mujoco.MjData(model)
 
-print(f'Number of actuators in the model: {model.nu}')
 
 
 # create the viewer object
@@ -20,5 +19,10 @@ viewer =mujoco.viewer.launch(model, data) #mujoco_viewer.MujocoViewer(model, dat
 #         break
 
 # close
+while True:
+    mujoco.mj_step(model, data)
+    viewer.render()
+
+# Close the viewer
 viewer.close()
 

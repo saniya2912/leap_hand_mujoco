@@ -30,11 +30,13 @@
     <camera name="top" mode="fixed" pos="0 0 0.8" xyaxes="1 0 0 0 1 0"/>
     
 
-    <body name="cube" pos="-0.01 0.005 0.03">
+    <body name="cube" pos="0 0.005 0.028">
     <inertial pos="0 0 0" mass="0.0001" diaginertia="0.001 0.001 0.001"/>
-    <geom name="cube" type="box" size="0.03 0.03 0.03" material="box"/>
-    <site name="contact_index" pos="0.03 0 0" quat="0 0 0 1"/>
-    <site name="contact_thumb" pos="-0.03 0 0" quat="1 0 0 0"/>
+    <geom name="cube" type="box" size="0.028 0.06 0.028" material="box"/>
+    <site name="contact_index1" pos="0.028 0 0" quat="0.7071 0 0.7071 0"/>
+    <site name="contact_thumb1" pos="-0.028 0 0" quat="0.7071 -0.7071 0 0"/>
+    <site name="contact_index2" pos="0.022 0 0" quat="0.7071 0 0.7071 0"/>
+    <site name="contact_thumb2" pos="-0.022 0 0" quat="0.7071 -0.7071 0 0"/>
     <joint name="box" type="free"/>
         </body>
 

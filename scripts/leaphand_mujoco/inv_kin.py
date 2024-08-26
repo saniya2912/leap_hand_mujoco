@@ -22,15 +22,15 @@ class GradientDescentIK:
             q[i] = max(self.model.jnt_range[i][0], min(q[i], self.model.jnt_range[i][1]))
 
 
-    def calculate(self, goal_pos, goal_rot, bodypart):
+    def calculate(self, goal_pos, goal_rot, site_name):
         self.data.qpos = self.init_q
         mujoco.mj_forward(self.model, self.data)
 
-        body_id= self.model.body(bodypart).id
+        site_id= self.model.site(site_name).id
         
         # Current pose and orientation
-        current_pos = self.data.body(body_id).xpos
-        current_rot = self.data.body(body_id).xmat.reshape(3, 3)
+        current_pos = self.data.site(site_id).xpos
+        current_rot = self.data.site(site_id).xmat.reshape(3, 3)
 
         # Position and orientation error
         pos_error = np.subtract(goal_pos, current_pos)
@@ -41,12 +41,12 @@ class GradientDescentIK:
         # Combine position and orientation errors
         error = np.concatenate([pos_error, rot_error])
 
-        max_iterations = 1000
+        max_iterations = 100000
         iteration = 0
 
         while np.linalg.norm(error) >= self.tol and iteration < max_iterations:
             # Calculate Jacobian for position and orientation
-            mujoco.mj_jac(self.model, self.data, self.jacp, self.jacr, goal_pos, body_id)
+            mujoco.mj_jacSite(self.model, self.data, self.jacp, self.jacr, site_id)
             full_jacobian = np.vstack((self.jacp, self.jacr))
             
             # Calculate gradient
@@ -62,8 +62,8 @@ class GradientDescentIK:
             mujoco.mj_forward(self.model, self.data)
             
             # Update position and orientation error
-            current_pos = self.data.body(body_id).xpos
-            current_rot = self.data.body(body_id).xmat.reshape(3, 3)
+            current_pos = self.data.site(site_id).xpos
+            current_rot = self.data.site(site_id).xmat.reshape(3, 3)
             pos_error = np.subtract(goal_pos, current_pos)
             rot_error = 0.5 * (np.cross(current_rot[:, 0], goal_rot[:, 0]) +
                                np.cross(current_rot[:, 1], goal_rot[:, 1]) +

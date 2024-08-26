@@ -40,3 +40,9 @@ WARNING: Nan, Inf or huge value in QACC at DOF 14. The simulation is unstable. T
 Fri Aug  9 16:45:09 2024
 WARNING: Nan, Inf or huge value in QACC at DOF 14. The simulation is unstable. Time = 0.0142.
 
+Tue Aug 27 00:31:35 2024
+WARNING: mju_openResource: unknown file '/home/sysidea/leap_hand_mujoco/model/leap hand/leadhand_19.8.24.xml'
+
+Tue Aug 27 00:32:09 2024
+WARNING: mju_openResource: unknown file '/home/sysidea/leap_hand_mujoco/model/leap hand/leadhand_19.8.24.xml'
+
