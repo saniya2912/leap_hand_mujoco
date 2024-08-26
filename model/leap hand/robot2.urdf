@@ -1,4 +1,5 @@
-<robot name="onshape">
+<robot name="leaphand">
+
 <link name="palm_lower">
 <visual>
 <origin xyz="-0.020095249652862544332 0.025757756134899473244 -0.034722403578460216134" rpy="0 -0 0" />
@@ -120,7 +121,6 @@
 <child link="pip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-1.047" upper = "1.047"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="1" type="revolute">
@@ -129,7 +129,6 @@
 <child link="mcp_joint" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.314" upper = "2.23"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="2" type="revolute">
@@ -138,7 +137,6 @@
 <child link="dip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.506" upper = "1.885"/>  
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="3" type="revolute">
@@ -147,7 +145,6 @@
 <child link="fingertip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.366" upper = "2.042"/>   
-<joint_properties friction="0.0"/>
 </joint>
 
 <link name="mcp_joint_2">
@@ -248,7 +245,6 @@
 <child link="pip_2" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-1.047" upper = "1.047"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="5" type="revolute">
@@ -257,7 +253,6 @@
 <child link="mcp_joint_2" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.314" upper = "2.23"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="6" type="revolute">
@@ -266,7 +261,6 @@
 <child link="dip_2" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.506" upper = "1.885"/>  
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="7" type="revolute">
@@ -275,7 +269,6 @@
 <child link="fingertip_2" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.366" upper = "2.042"/>   
-<joint_properties friction="0.0"/>
 </joint>
 
 <link name="mcp_joint_3">
@@ -376,7 +369,6 @@
 <child link="pip_3" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-1.047" upper = "1.047"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="9" type="revolute">
@@ -385,7 +377,6 @@
 <child link="mcp_joint_3" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.314" upper = "2.23"/>
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="10" type="revolute">
@@ -394,7 +385,6 @@
 <child link="dip_3" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.506" upper = "1.885"/>  
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="11" type="revolute">
@@ -403,7 +393,6 @@
 <child link="fingertip_3" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.366" upper = "2.042"/>   
-<joint_properties friction="0.0"/>
 </joint>
 
 <link name="pip_4">
@@ -504,7 +493,6 @@
 <child link="pip_4" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.349" upper = "2.094"/> 
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="13" type="revolute">
@@ -513,7 +501,6 @@
 <child link="thumb_pip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-0.47" upper = "2.443"/> 
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="14" type="revolute">
@@ -522,7 +509,6 @@
 <child link="thumb_dip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-1.20" upper = "1.90"/> 
-<joint_properties friction="0.0"/>
 </joint>
 
 <joint name="15" type="revolute">
@@ -531,7 +517,6 @@
 <child link="thumb_fingertip" />
 <axis xyz="0 0 -1"/>
 <limit effort="0.95" velocity="8.48" lower = "-1.34" upper = "1.88"/> 
-<joint_properties friction="0.0"/>
 </joint>
 
 </robot>

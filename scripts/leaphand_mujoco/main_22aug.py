@@ -5,13 +5,15 @@ import mujoco.viewer
 import sys
 import mediapy as media
 import matplotlib.pyplot as plt
+import PyKDL as kdl
+from urdf_parser_py.urdf import URDF
+import numpy as np
+from scipy.linalg import block_diag
+
 
 
 class LeapNodeMujoco:
-    def __init__(self,model_path):
-        ####Some parameters
-        # self.ema_amount = float(rospy.get_param('/leaphand_node/ema', '1.0')) #take only current
-        #self.kP=600
+    def __init__(self,model_path):    
         self.kP = 10
         self.kI = 0
         self.kD = 5
@@ -38,25 +40,10 @@ class LeapNodeMujoco:
         self.renderer = mujoco.Renderer(self.m)
         self.frames = []
 
-       # self.motors = motors = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] #define motors from somewhere
-
         # For PID control
         self.prev_error = np.zeros_like(self.curr_pos)
         self.prev_error_palm = np.zeros_like(self.curr_pos_palm)
         # self.integral_palm=np.zeros_like(self.curr_pos_palm)
-        
-
-        # Set initial control values
-        #self.set_initial_controls()
-
-    def set_initial_controls(self): #needs changing
-        # This sets the initial control values directly in MuJoCo
-        num_actuators = self.m.nu
-        # self.d.ctrl[:num_actuators] = np.ones(num_actuators) * self.kP
-        
-        # self.d.ctrl[:num_actuators] = 0
-        print("control is 0")
-        # Initialize control values with Kp, Ki, Kd might be more complex depending on the control strategy
 
 
     def apply_controls_wrist(self, desired_position):
@@ -109,7 +96,7 @@ class LeapNodeMujoco:
         
         self.prev_error_palm = error_palm   
 
-    def apply_controls(self, desired_positions):
+    def apply_controls_hand(self, desired_positions):
 
         # Calculate control signals based on PID control (if needed)
         current_positions = self.d.qpos[-16:]
@@ -124,36 +111,29 @@ class LeapNodeMujoco:
             self.kD * derivative
         )
         
-        # Limit the current if necessary
-        #control_signals = np.clip(control_signals, -self.curr_lim, self.curr_lim)
-
         self.d.ctrl[-16:] = control_signals
-        
         
         self.prev_error = errors    
 
-    #Receive LEAP pose and directly control the robot
-    def set_leap(self, pose):
-        self.prev_pos = self.curr_pos
-        self.curr_pos = np.array(pose)
-        self.apply_controls(self.curr_pos)
+    def apply_controls_index(self, desired_positions):
 
-    # #allegro compatibility
-    # def set_allegro(self, pose):
-    #     pose = lhus.allegro_to_LEAPhand(pose, zeros=False)
-    #     self.prev_pos = self.curr_pos
-    #     self.curr_pos = np.array(pose)
-    #     self.dxl_client.write_desired_pos(self.motors, self.curr_pos)
-    # #Sim compatibility, first read the sim value in range [-1,1] and then convert to leap
+        # Calculate control signals based on PID control (if needed)
+        current_positions = self.d.qpos[-16:-12]
+        # print(current_positions)
+        errors = desired_positions - current_positions
+        # self.integral += errors
+        derivative = errors - self.prev_error
+        
+        control_signals = (
+            self.kP * errors +
+            # self.kI * self.integral +
+            self.kD * derivative
+        )
+        
+        self.d.ctrl[-16:-12] = control_signals
+        
+        self.prev_error = errors    
 
-    # Read position
-    def read_pos(self):
-        return self.d.qpos.tolist()
-    
-    # Read velocity
-    def read_vel(self):
-        return self.d.qvel.tolist()
-    
    
     def step_video(self, framerate,camera):
         mujoco.mj_step(self.m, self.d)
@@ -175,6 +155,7 @@ class LeapNodeMujoco:
 class GraspClass:
     def __init__(self):
         self.G_matrices=[]
+        self.Jh_blocks=[]
         
     def G_i(self,contact_orientation, r_theta,b):
         matrix1 = contact_orientation
@@ -195,3 +176,102 @@ class GraspClass:
         # Concatenate all G_i matrices horizontally to form G
         G = np.hstack(self.G_matrices)
         return G
+    
+    def Jh(self,n,contact_orientations,Rpks,Js):
+        for i in range(n):
+            Jh_i=np.matmul(np.matmul(contact_orientations[i].T,Rpks[i]),Js[i])
+            self.Jh_blocks.append(Jh_i)
+        return block_diag(*self.Jh_blocks)
+    
+class LeapHandKinematics:
+    def __init__(self, urdf_path):
+        self.urdf_model = URDF.from_xml_file(urdf_path)
+        self.base_link = 'palm_lower'
+
+    def find_joint_for_link(self, child_link_name):
+        """Find the joint in the URDF model that connects to the given child link."""
+        for joint in self.urdf_model.joints:
+            if joint.child == child_link_name:
+                return joint
+        return None
+
+    def add_joint_to_chain(self, chain, joint):
+        if joint.type == 'revolute' or joint.type == 'continuous':
+            kdl_joint = kdl.Joint(
+                joint.name,
+                kdl.Vector(joint.origin.xyz[0], joint.origin.xyz[1], joint.origin.xyz[2]),
+                kdl.Vector(joint.axis[0], joint.axis[1], joint.axis[2]),
+                kdl.Joint.RotAxis
+            )
+        elif joint.type == 'fixed':
+            kdl_joint = kdl.Joint(joint.name, kdl.Joint.Fixed)
+        else:
+            print(f"Unsupported joint type: {joint.type}")
+            return False
+
+        kdl_segment = kdl.Segment(joint.child, kdl_joint, kdl.Frame())
+        chain.addSegment(kdl_segment)
+        return True
+
+    def create_kdl_chain(self, end_link):
+        chain = kdl.Chain()
+        current_link = end_link
+
+        while current_link != self.base_link:
+            joint = self.find_joint_for_link(current_link)
+            if not joint:
+                print(f"Joint for link {current_link} not found!")
+                return None
+            if not self.add_joint_to_chain(chain, joint):
+                print(f"Failed to add joint {joint.name} to chain")
+                return None
+            current_link = joint.parent
+
+        return chain
+
+    def perform_fk(self, end_link, joint_positions):
+        chain = self.create_kdl_chain(end_link)
+        if not chain or chain.getNrOfSegments() == 0:
+            raise RuntimeError(f"Chain for {end_link} could not be created.")
+
+        fk_solver = kdl.ChainFkSolverPos_recursive(chain)
+        end_effector_frame = kdl.Frame()
+        print(f"Calculating FK for joint positions: {[joint_positions[i] for i in range(joint_positions.rows())]}")
+        result = fk_solver.JntToCart(joint_positions, end_effector_frame)
+
+        if result >= 0:
+            return end_effector_frame
+        else:
+            raise RuntimeError("FK solver failed")
+
+    def perform_ik(self, end_link, target_frame):
+        chain = self.create_kdl_chain(end_link)
+        if not chain or chain.getNrOfSegments() == 0:
+            raise RuntimeError(f"Chain for {end_link} could not be created.")
+
+        num_joints = chain.getNrOfJoints()
+        joint_positions = kdl.JntArray(num_joints)
+        ik_solver = kdl.ChainIkSolverPos_LMA(chain)
+
+        initial_positions = kdl.JntArray(num_joints)  # Start with zero positions
+        result = ik_solver.CartToJnt(initial_positions, target_frame, joint_positions)
+
+        if result >= 0:
+            return [joint_positions[i] for i in range(num_joints)]
+        else:
+            raise RuntimeError("IK solver failed")
+
+    def compute_jacobian(self, end_link, joint_positions):
+        chain = self.create_kdl_chain(end_link)
+        if not chain or chain.getNrOfSegments() == 0:
+            raise RuntimeError(f"Chain for {end_link} could not be created.")
+
+        jacobian = kdl.Jacobian(chain.getNrOfJoints())
+        jnt_to_jac_solver = kdl.ChainJntToJacSolver(chain)
+
+        result = jnt_to_jac_solver.JntToJac(joint_positions, jacobian)
+
+        if result >= 0:
+            return jacobian
+        else:
+            raise RuntimeError("Jacobian computation failed")

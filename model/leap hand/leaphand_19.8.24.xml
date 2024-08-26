@@ -25,16 +25,16 @@
   <worldbody>
 
     <light name="top" pos="0 0 1"/>
-    <geom type="plane" pos="0 0 -0.025" size="3 3 .01" material="grid"/>
+    <geom type="plane" pos="0 0 0" size="3 3 .01" material="grid"/>
     <camera name="closeup" mode="fixed" pos="-0.02 1 0.025" xyaxes="-1 0 0 0 0 1"/>
     <camera name="top" mode="fixed" pos="0 0 0.8" xyaxes="1 0 0 0 1 0"/>
     
 
-    <body name="cube" pos="-0.02 0.005 0">
+    <body name="cube" pos="-0.01 0.005 0.03">
     <inertial pos="0 0 0" mass="0.0001" diaginertia="0.001 0.001 0.001"/>
-    <geom name="cube" type="box" size="0.027 0.027 0.027" material="box"/>
-    <site name="contact_index" pos="0.027 0 0" quat="0 0 0 1"/>
-    <site name="contact_thumb" pos="-0.027 0 0" quat="1 0 0 0"/>
+    <geom name="cube" type="box" size="0.03 0.03 0.03" material="box"/>
+    <site name="contact_index" pos="0.03 0 0" quat="0 0 0 1"/>
+    <site name="contact_thumb" pos="-0.03 0 0" quat="1 0 0 0"/>
     <joint name="box" type="free"/>
         </body>
 
