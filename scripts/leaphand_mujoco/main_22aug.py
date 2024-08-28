@@ -14,13 +14,13 @@ from scipy.linalg import block_diag
 
 class LeapNodeMujoco:
     def __init__(self,model_path):    
-        self.kP = 10
+        self.kP = 10 #25 for 22.8.24
         self.kI = 0
         self.kD = 5
         self.kPpalm = 250
         self.kIpalm = 0
         self.kDpalm = 10
-        self.kPwrist = 10
+        self.kPwrist = 15
         self.kIwrist = 0
         self.kDwrist = 1
         self.curr_lim = 0
