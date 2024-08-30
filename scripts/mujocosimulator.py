@@ -2,7 +2,7 @@ import mujoco
 import mujoco.viewer
 
 
-model = mujoco.MjModel.from_xml_path('/home/sysidea/leap_hand_mujoco/model/leap hand/thumb.xml')
+model = mujoco.MjModel.from_xml_path('/home/sysidea/leap_hand_mujoco/model/leap hand/middle.xml')
 data = mujoco.MjData(model)
 
 

@@ -14,9 +14,12 @@ from scipy.linalg import block_diag
 
 class LeapNodeMujoco:
     def __init__(self,model_path):    
-        self.kP = 10 #25 for 22.8.24
+        self.kP = 15 #25 for 22.8.24
         self.kI = 0
         self.kD = 5
+        self.kP_slow =2
+        self.kI = 0
+        self.kD_slow = 1
         self.kPpalm = 250
         self.kIpalm = 0
         self.kDpalm = 10
@@ -114,6 +117,25 @@ class LeapNodeMujoco:
         self.d.ctrl[-16:] = control_signals
         
         self.prev_error = errors    
+
+    def apply_controls_hand_slow(self, desired_positions):
+
+        # Calculate control signals based on PID control (if needed)
+        current_positions = self.d.qpos[-16:]
+        # print(current_positions)
+        errors = desired_positions - current_positions
+        # self.integral += errors
+        derivative = errors - self.prev_error
+        
+        control_signals = (
+            self.kP_slow * errors +
+            # self.kI * self.integral +
+            self.kD_slow * derivative
+        )
+        
+        self.d.ctrl[-16:] = control_signals
+        
+        self.prev_error = errors   
 
     def apply_controls_index(self, desired_positions):
 
