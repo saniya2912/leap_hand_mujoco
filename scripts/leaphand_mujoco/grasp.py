@@ -27,14 +27,15 @@ class GraspClass:
         G = np.hstack(self.G_matrices)
         return G
     
-    def J(xml_path,site_name):
-        model=mujoco.MjModel.from_xml_path(xml_path)
-        data = mujoco.MjData(model)
-        jacp = np.zeros((3, model.nv))  # translation jacobian
-        jacr = np.zeros((3, model.nv)) 
+    def J(self,xml_path,site_name):
+        self.model=mujoco.MjModel.from_xml_path(xml_path)
+        self.data = mujoco.MjData(self.model)
+        mujoco.mj_forward(self.model, self.data)
+        jacp = np.zeros((3, self.model.nv))  # translation jacobian
+        jacr = np.zeros((3, self.model.nv)) 
 
-        site_id=model.site(site_name).id
-        mujoco.mj_jacSite(model, data, jacp, jacr, site_id)
+        site_id=self.model.site(site_name).id
+        mujoco.mj_jacSite(self.model, self.data, jacp, jacr, site_id)
 
         return np.vstack((jacp, jacr))
     
@@ -43,6 +44,8 @@ class GraspClass:
             Jh_i=np.matmul(np.matmul(contact_orientations[i].T,Rpks[i]),Js[i])
             self.Jh_blocks.append(Jh_i)
         return block_diag(*self.Jh_blocks)
+    
+
 
 
    
